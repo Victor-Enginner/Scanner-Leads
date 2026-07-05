@@ -1,0 +1,14 @@
+export const CHECKOUT_URL = process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL || "https://buy.stripe.com/test_4gM7sKewxcse6Y02IF2Ry00";
+export const PRODUCT_NAME = "NEXUS SCAN";
+export const PRODUCT_PRICE = 97; // R$
+export const PRODUCT_PRICE_ORIGINAL = 197; // R$ (âncora)
+export const MIN_LEADS_GUARANTEE = 20;
+export const MAX_SCANS_PER_WEEK = 5;
+export const BONUS_FIRST_10 = true;
+export const CONTACT_INSTAGRAM = "@engenheiro.ai";
+export const CONTACT_EMAIL = "contato@nexusscan.com.br";
+export const CTA_PRIMARY = "QUERO MEUS LEADS AGORA";
+export const CTA_SECONDARY = "GARANTIR MINHA VARREDURA";
+export const SUPPORT_INSTAGRAM_URL = "https://instagram.com/engenheiro.ai";
+export const CONTACT_WHATSAPP = "5516982141822";
+export const SUPPORT_WHATSAPP_URL = "https://wa.me/5516982141822";
