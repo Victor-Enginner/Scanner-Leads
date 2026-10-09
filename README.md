@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CTA Scanner (Scanner de Leads)
 
-## Getting Started
+Aplicação Next.js 14 que busca empresas pelo Google Places, analisa com IA (OpenAI) e vende o acesso com checkout Stripe.
+Login com Google ou por e-mail (NextAuth + Drizzle/Postgres) e arquivos em armazenamento compatível com S3.
 
-First, run the development server:
+## Instalar do zero (PC novo)
 
+### 1. Requisitos
+- **Node.js 20 ou mais novo** (nodejs.org) e **Git**
+- Um **Postgres**: local (Docker) ou na nuvem (Supabase, Neon)
+
+### 2. Baixar o código
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Victor-Enginner/Scanner-Leads.git
+cd Scanner-Leads
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Configurar
+```bash
+cp .env.example .env.local
+```
+Preencha o `.env.local`. Cada variável está explicada no `.env.example`. Para só abrir o site localmente, bastam `DATABASE_URL` e `NEXTAUTH_SECRET`; o resto liga cada recurso (login Google, e-mail, busca, IA, Stripe, S3).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Postgres local com Docker (opcional):
+```bash
+docker run -d --name nexus-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=nexus_scan -p 5432:5432 postgres:16
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Criar as tabelas
+O esquema fica em `lib/db/schema.ts`. Envie-o para o banco:
+```bash
+npx drizzle-kit push
+```
 
-## Learn More
+### 5. Rodar
+```bash
+npm run dev      # http://localhost:3000
+```
+Produção: `npm run build && npm start`.
 
-To learn more about Next.js, take a look at the following resources:
+### Stripe (webhook local)
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+Copie o `whsec_...` exibido para `STRIPE_WEBHOOK_SECRET`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy (Vercel)
+Importe o repositório na Vercel e cadastre as mesmas variáveis do `.env.local` em *Settings → Environment Variables*. Mude `NEXTAUTH_URL` para o domínio final.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts úteis
+- `npx tsx scripts/test-scraper.ts`: testa a busca de empresas
+- `npx tsx scripts/test-e2e.ts`: teste ponta a ponta
